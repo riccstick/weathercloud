@@ -13,7 +13,7 @@ def read_and_sample_csv(file_path, num_points_to_plot):
 num_points_to_plot = 1600
 combined_df = pd.DataFrame()
 
-csv_files = glob.glob('data/*.csv')  # Update the path to your CSV files
+csv_files = glob.glob('/home/ricci/weathercloud/data/*.csv')  # Update the path to your CSV files
 
 for file in csv_files:
     sampled_data = read_and_sample_csv(file, num_points_to_plot)
