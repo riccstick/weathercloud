@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import glob
 
+DIR = '/home/ricci/weathercloud/'
+
 def read_and_sample_csv(file_path, num_points_to_plot):
     df = pd.read_csv(file_path, encoding='utf-16-le', sep=';', header=0, thousands='.', decimal=',', skip_blank_lines=True, on_bad_lines='skip')
     sampled_df = df.sample(n=num_points_to_plot, replace=False)
@@ -13,7 +15,7 @@ def read_and_sample_csv(file_path, num_points_to_plot):
 num_points_to_plot = 1600
 combined_df = pd.DataFrame()
 
-csv_files = glob.glob('/home/ricci/weathercloud/data/*.csv')  # Update the path to your CSV files
+csv_files = glob.glob(DIR + 'data/*.csv')  # Update the path to your CSV files
 
 for file in csv_files:
     sampled_data = read_and_sample_csv(file, num_points_to_plot)
@@ -52,6 +54,6 @@ plt.xlabel(x_axis_column_name, fontsize=16)
 plt.ylabel(y_axis_column_name, fontsize=16)
 plt.title('Wetterdaten Langau 124, 2091 Langau, NÖ: ' + y_axis_column_name, fontsize=18)
 plt.legend(fontsize=14)
-plt.savefig(y_axis_column_name + '.png', format='png', dpi=300)
+plt.savefig(DIR + '/' + y_axis_column_name + '.png', format='png', dpi=300)
 #plt.show()
 
