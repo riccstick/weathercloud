@@ -60,5 +60,7 @@ plt.xlabel(x_axis_column_name)
 plt.ylabel(y_axis_column_name)
 plt.title('Weather data from Langau 124, 2091 Langau, NÖ: ' + y_axis_column_name)
 plt.legend()
-plt.show()
+plt.rcParams["figure.figsize"] = (50,30)
+plt.savefig(y_axis_column_name + '.png', format='png', dpi=300)
+#plt.show()
 #'''
