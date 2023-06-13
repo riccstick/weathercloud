@@ -20,7 +20,7 @@ for file in csv_files:
     combined_df = pd.concat([combined_df, sampled_data])
 
 x_column_index = 0  # Update with the desired column index for the x-axis data
-# 1 -> Temperature außen
+# 2 -> Temperature außen
 # 9 -> Luftfeuchtigkeit außen 
 # 11 -> Durch. Windgeschwindigkeit
 # 14 -> Regen
@@ -37,30 +37,21 @@ combined_df = combined_df.sort_values(x_axis_column_name)
 x_values = combined_df.iloc[:, x_column_index]
 y_values = combined_df.iloc[:, y_column_index]
 
-
-'''
-# for raindata
-plt.plot(x_values, y_values, linestyle='-', lw = 1, color = 'red', ms = 0)
-plt.xlabel(x_axis_column_name)
-plt.ylabel(y_axis_column_name)
-plt.title('Weather data from Langau 124, 2091 Langau, NÖ: ' + y_axis_column_name)
-plt.show()
-'''
-
-
-
 # Compute moving averages
 window_size = 100
 combined_df['moving_average'] = combined_df[y_axis_column_name].rolling(window_size).mean()
 
 # Plot the data and moving averages
-plt.plot(combined_df[x_axis_column_name], combined_df[y_axis_column_name], label='Measured Data', ms = 0, linestyle = '-', lw = 0.5, color = '#C0C0C0')
+plt.figure(figsize=(10240/300, 3840/300), dpi=300)
+plt.grid(True, linestyle='--', linewidth=0.5, color='gray', alpha=0.5)
+plt.plot(combined_df[x_axis_column_name], combined_df[y_axis_column_name], label='Measured Data', ms = 0, linestyle = '-', lw = 1.5, color = '#C0C0C0')
 plt.plot(combined_df[x_axis_column_name], combined_df['moving_average'], label='Moving Average', ms = 1, color = 'red', marker = '.', linestyle = '')
-plt.xlabel(x_axis_column_name)
-plt.ylabel(y_axis_column_name)
-plt.title('Weather data from Langau 124, 2091 Langau, NÖ: ' + y_axis_column_name)
-plt.legend()
-plt.rcParams["figure.figsize"] = (50,30)
+plt.xticks(fontsize=15)
+plt.yticks(fontsize=15)
+plt.xlabel(x_axis_column_name, fontsize=16)
+plt.ylabel(y_axis_column_name, fontsize=16)
+plt.title('Wetterdaten Langau 124, 2091 Langau, NÖ: ' + y_axis_column_name, fontsize=18)
+plt.legend(fontsize=14)
 plt.savefig(y_axis_column_name + '.png', format='png', dpi=300)
 #plt.show()
-#'''
+
