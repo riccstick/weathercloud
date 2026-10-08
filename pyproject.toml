@@ -5,11 +5,13 @@ description = "Plot monthly rainfall from Weathercloud CSV exports"
 requires-python = ">=3.12"
 dependencies = [
     "matplotlib>=3.11.2",
+    "plotly>=7.1.0",
 ]
 
 [project.scripts]
 plot-rainfall = "weathercloud.plot_rainfall:main"
 update-rainfall = "weathercloud.update_rainfall:main"
+build-rainfall-dashboard = "weathercloud.build_dashboard:main"
 
 [build-system]
 requires = ["uv_build>=0.11.20,<0.12.0"]

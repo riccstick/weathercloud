@@ -40,3 +40,15 @@ uv run plot-rainfall
 The GitHub Actions workflow in `.github/workflows/collect-weathercloud.yml` runs every 10 minutes and commits new readings to the default branch. It can also be run manually from the repository's Actions page. The station ID is a public identifier configured in the workflow; no API password or GitHub secret is needed. Repository Actions settings must allow workflows to write contents.
 
 This uses Weathercloud's unofficial, reverse-engineered API, which may change. Its historical graph endpoint is listed as experimental, so the collector adds readings going forward and does not backfill missing months. GitHub scheduled workflows can start late during periods of high load and only run from the default branch. The API's rain field is the cumulative total for the station's local day, so use `--timezone` if the station is outside `Europe/Vienna`.
+
+## GitHub Pages dashboard
+
+The dashboard generator uses Plotly to produce interactive charts in a static HTML page. It includes annual totals, month and day comparisons, a monthly heatmap, and temperature history. Plotly lets visitors hover, zoom, and show or hide years; the existing Matplotlib command remains available for local PNG plots.
+
+Generate the page locally with:
+
+```sh
+uv run build-rainfall-dashboard --data-dir data --output-dir site
+```
+
+The `Build and publish weather dashboard` workflow deploys on changes to the main branch and after successful Weathercloud collection runs. To enable the first Pages deployment, open **Settings → Pages → Build and deployment** and set **Source** to **GitHub Actions**. The deployed URL is shown on the workflow's deployment environment in GitHub.
