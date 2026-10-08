@@ -7,6 +7,7 @@ import calendar
 import codecs
 import csv
 import io
+import json
 import math
 from collections import defaultdict
 from dataclasses import dataclass
@@ -58,11 +59,29 @@ def parse_timestamp(value: str) -> datetime:
         return datetime.strptime(value, "%d/%m/%Y %H:%M:%S")
 
 
+def add_daily_rainfall(
+    daily_maxima: dict[date, float], raw_date: str, raw_rain: str, path: Path, line_number: int
+) -> None:
+    try:
+        observation_date = parse_timestamp(raw_date).date()
+        rain_mm = float(raw_rain.replace(",", "."))
+    except ValueError as exc:
+        raise ValueError(
+            f"Could not parse date or rain value in {path} at line {line_number}"
+        ) from exc
+    if not math.isfinite(rain_mm) or rain_mm < 0:
+        raise ValueError(f"Invalid rain value {raw_rain!r} in {path} at line {line_number}")
+
+    previous = daily_maxima.get(observation_date, 0.0)
+    daily_maxima[observation_date] = max(previous, rain_mm)
+
+
 def load_daily_rainfall(data_dir: Path) -> dict[date, float]:
-    """Read the maximum recorded rain value for each calendar date."""
+    """Read daily cumulative rainfall from Weathercloud CSV and JSONL files."""
     csv_files = sorted(data_dir.glob("*.csv"))
-    if not csv_files:
-        raise FileNotFoundError(f"No CSV files found in {data_dir}")
+    jsonl_files = sorted((data_dir / "weathercloud-observations").glob("*.jsonl"))
+    if not csv_files and not jsonl_files:
+        raise FileNotFoundError(f"No CSV or Weathercloud JSONL files found in {data_dir}")
 
     daily_maxima: dict[date, float] = {}
     for path in csv_files:
@@ -77,18 +96,26 @@ def load_daily_rainfall(data_dir: Path) -> dict[date, float]:
                 continue
 
             raw_date = (row.get(date_column) or "").strip()
-            try:
-                observation_date = parse_timestamp(raw_date).date()
-                rain_mm = float(raw_rain.replace(",", "."))
-            except ValueError as exc:
-                raise ValueError(
-                    f"Could not parse date or rain value in {path} at line {line_number}"
-                ) from exc
-            if not math.isfinite(rain_mm) or rain_mm < 0:
-                raise ValueError(f"Invalid rain value {raw_rain!r} in {path} at line {line_number}")
+            add_daily_rainfall(daily_maxima, raw_date, raw_rain, path, line_number)
 
-            previous = daily_maxima.get(observation_date, 0.0)
-            daily_maxima[observation_date] = max(previous, rain_mm)
+    for path in jsonl_files:
+        with path.open("r", encoding="utf-8") as jsonl_file:
+            for line_number, line in enumerate(jsonl_file, start=1):
+                if not line.strip():
+                    continue
+                try:
+                    observation = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    raise ValueError(f"Invalid JSON in {path} at line {line_number}") from exc
+                if not isinstance(observation, dict):
+                    raise ValueError(f"Expected an observation object in {path} at line {line_number}")
+                raw_rain = observation.get("rain_today_mm")
+                if raw_rain is None:
+                    continue
+                raw_date = observation.get("timestamp")
+                if not isinstance(raw_date, str):
+                    raise ValueError(f"Missing timestamp in {path} at line {line_number}")
+                add_daily_rainfall(daily_maxima, raw_date, str(raw_rain), path, line_number)
 
     return daily_maxima
 

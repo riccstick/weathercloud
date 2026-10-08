@@ -25,3 +25,18 @@ uv run plot-rainfall --data-dir data --output plots/monthly.png --yearly-output 
 ```
 
 The plot compares calendar-month rainfall across years. For each date, the script takes the maximum `Regen (mm)` reading, then sums those daily values. Hatched bars indicate at least one day without rain readings; months with no CSV data have no bar.
+
+## Update from Weathercloud
+
+The unofficial [weathercloud-js](https://github.com/maxime-mrl/weathercloud-js) project reads the current station values. This project has a matching Python command that records observations as monthly JSON Lines files under `data/weathercloud-observations/`. Each record contains the local timestamp, temperature, daily rainfall total, and rain rate. The plots combine those records with the existing CSV exports.
+
+Fetch the latest update manually with your station ID (9–10 digits, optionally prefixed with `d`):
+
+```sh
+uv run update-rainfall --station-id d7978634673
+uv run plot-rainfall
+```
+
+The GitHub Actions workflow in `.github/workflows/collect-weathercloud.yml` runs every 10 minutes and commits new readings to the default branch. It can also be run manually from the repository's Actions page. The station ID is a public identifier configured in the workflow; no API password or GitHub secret is needed. Repository Actions settings must allow workflows to write contents.
+
+This uses Weathercloud's unofficial, reverse-engineered API, which may change. Its historical graph endpoint is listed as experimental, so the collector adds readings going forward and does not backfill missing months. GitHub scheduled workflows can start late during periods of high load and only run from the default branch. The API's rain field is the cumulative total for the station's local day, so use `--timezone` if the station is outside `Europe/Vienna`.
