@@ -1,4 +1,4 @@
-"""Build a self-contained static dashboard of rainfall and temperature."""
+"""Build a static HTML dashboard of rainfall and temperature."""
 
 from __future__ import annotations
 
