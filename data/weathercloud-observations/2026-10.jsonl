@@ -1175,3 +1175,4 @@
 {"epoch":1792798696,"timestamp":"2026-10-24T01:38:16+02:00","temperature_c":6.1,"rain_today_mm":1.0,"rain_rate_mm_h":1.5}
 {"epoch":1792799292,"timestamp":"2026-10-24T01:48:12+02:00","temperature_c":6.1,"rain_today_mm":1.0,"rain_rate_mm_h":0.0}
 {"epoch":1792800498,"timestamp":"2026-10-24T02:08:18+02:00","temperature_c":5.9,"rain_today_mm":1.0,"rain_rate_mm_h":0.0}
+{"epoch":1792803501,"timestamp":"2026-10-24T02:58:21+02:00","temperature_c":7.0,"rain_today_mm":3.3,"rain_rate_mm_h":6.0}
