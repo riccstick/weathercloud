@@ -16,8 +16,6 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    env:
-      WEATHERCLOUD_STATION_ID: d7978634673
     steps:
       - name: Check out the default branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -35,8 +33,16 @@ jobs:
       - name: Install project dependencies
         run: uv sync --frozen
 
-      - name: Collect the latest observation
-        run: uv run --frozen update-rainfall
+      - name: Collect the latest observation from each station
+        id: collect
+        run: |
+          failed=0
+          for station_id in d7978634673 d7139585049; do
+            if ! uv run --frozen update-rainfall --station-id "$station_id"; then
+              failed=1
+            fi
+          done
+          echo "failed=$failed" >> "$GITHUB_OUTPUT"
 
       - name: Commit a new observation
         run: |
@@ -49,3 +55,9 @@ jobs:
           fi
           git commit -m "data: collect Weathercloud observation"
           git push origin HEAD
+
+      - name: Report station collection failures
+        if: steps.collect.outputs.failed == '1'
+        run: |
+          echo "At least one Weathercloud station could not be collected." >&2
+          exit 1

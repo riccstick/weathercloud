@@ -18,6 +18,9 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 
+PRIMARY_STATION_ID = "7978634673"
+
+
 @dataclass(frozen=True)
 class MonthlyRainfall:
     total_mm: float
@@ -76,10 +79,16 @@ def add_daily_rainfall(
     daily_maxima[observation_date] = max(previous, rain_mm)
 
 
-def load_daily_rainfall(data_dir: Path) -> dict[date, float]:
-    """Read daily cumulative rainfall from Weathercloud CSV and JSONL files."""
-    csv_files = sorted(data_dir.glob("*.csv"))
-    jsonl_files = sorted((data_dir / "weathercloud-observations").glob("*.jsonl"))
+def load_daily_rainfall(
+    data_dir: Path, station_id: str = PRIMARY_STATION_ID
+) -> dict[date, float]:
+    """Read one station's daily cumulative rainfall from CSV and JSONL files."""
+    observations_dir = data_dir / "weathercloud-observations"
+    csv_files = sorted(data_dir.glob("*.csv")) if station_id == PRIMARY_STATION_ID else []
+    jsonl_files = sorted((observations_dir / station_id).glob("*.jsonl"))
+    if station_id == PRIMARY_STATION_ID:
+        # Older readings were stored directly under weathercloud-observations.
+        jsonl_files += sorted(observations_dir.glob("*.jsonl"))
     if not csv_files and not jsonl_files:
         raise FileNotFoundError(f"No CSV or Weathercloud JSONL files found in {data_dir}")
 
@@ -426,6 +435,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Plot monthly rainfall by year from Weathercloud CSV files.")
     parser.add_argument("--data-dir", type=Path, default=Path("data"), help="directory containing CSV files")
     parser.add_argument(
+        "--station-id",
+        default=PRIMARY_STATION_ID,
+        help=f"station ID to plot (default: {PRIMARY_STATION_ID})",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=Path("plots/monthly-rainfall.png"),
@@ -457,7 +471,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    daily_rainfall = load_daily_rainfall(args.data_dir)
+    station_id = args.station_id.lower().removeprefix("d")
+    daily_rainfall = load_daily_rainfall(args.data_dir, station_id)
     monthly = summarize_monthly_rainfall(daily_rainfall)
     plot_monthly_rainfall(monthly, args.output)
     plot_yearly_rainfall(monthly, args.yearly_output)

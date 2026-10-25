@@ -72,11 +72,14 @@ def fetch_current_observation(station_id: str) -> dict[str, object]:
     }
 
 
-def append_observation(output: Path, observation: dict[str, object], timezone: ZoneInfo) -> bool:
+def append_observation(
+    output: Path, observation: dict[str, object], timezone: ZoneInfo, station_id: str
+) -> bool:
     """Append a new API update, skipping an epoch that is already stored."""
     epoch = int(observation["epoch"])
     observed_at = datetime.fromtimestamp(epoch, timezone)
     record = {
+        "station_id": station_id,
         "epoch": epoch,
         "timestamp": observed_at.isoformat(timespec="seconds"),
         "temperature_c": observation["temperature_c"],
@@ -139,8 +142,8 @@ def main() -> None:
         observation = fetch_current_observation(station_id)
         epoch = int(observation["epoch"])
         local_time = datetime.fromtimestamp(epoch, timezone)
-        output = args.output_dir / f"{local_time:%Y-%m}.jsonl"
-        added = append_observation(output, observation, timezone)
+        output = args.output_dir / station_id / f"{local_time:%Y-%m}.jsonl"
+        added = append_observation(output, observation, timezone, station_id)
     except (OSError, RuntimeError, ValueError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         raise SystemExit(1) from exc
