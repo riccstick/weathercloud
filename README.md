@@ -28,7 +28,7 @@ The plot compares calendar-month rainfall across years. For each date, the scrip
 
 ## Update from Weathercloud
 
-The unofficial [weathercloud-js](https://github.com/maxime-mrl/weathercloud-js) project reads the current station values. This project has a matching Python command that records observations as monthly JSON Lines files under `data/weathercloud-observations/<station-id>/`. Each record contains its station ID, local timestamp, temperature, daily rainfall total, and rain rate. The existing CSV exports provide historical rainfall for Langau 124; the second station's readings are collected going forward.
+The unofficial [weathercloud-js](https://github.com/maxime-mrl/weathercloud-js) project reads the current station values. This project has a matching Python command that records observations as monthly JSON Lines files under `data/weathercloud-observations/<station-id>/`. Each record contains its station ID, local timestamp, temperature, daily rainfall total, and rain rate. The existing CSV exports provide historical rainfall for Langau 124 (`7978634673`); Wolfsbach 28 (`7139585049`) is collected going forward. Both stations use the `Europe/Vienna` timezone.
 
 Fetch the latest update manually with your station ID (9–10 digits, optionally prefixed with `d`):
 
@@ -38,9 +38,9 @@ uv run update-rainfall --station-id d7139585049
 uv run plot-rainfall
 ```
 
-The GitHub Actions workflow in `.github/workflows/collect-weathercloud.yml` collects both stations every 10 minutes and commits new readings to the default branch. Run `uv run plot-rainfall --station-id d7139585049` to generate local PNG charts for the second station. The IDs are public identifiers; no API password or GitHub secret is needed. Repository Actions settings must allow workflows to write contents.
+The GitHub Actions workflow in `.github/workflows/collect-weathercloud.yml` collects both stations every 10 minutes and commits new readings to the default branch. Run `uv run plot-rainfall --station-id d7139585049` to generate local PNG charts for Wolfsbach 28. The IDs are public identifiers; no API password or GitHub secret is needed. Repository Actions settings must allow workflows to write contents.
 
-This uses Weathercloud's unofficial, reverse-engineered API, which may change. Its historical graph endpoint is listed as experimental, so the collector adds readings going forward and does not backfill missing months. GitHub scheduled workflows can start late during periods of high load and only run from the default branch. The API's rain field is the cumulative total for the station's local day, so use `--timezone` if the station is outside `Europe/Vienna`.
+This uses Weathercloud's unofficial, reverse-engineered API, which may change. Its historical graph endpoint is listed as experimental, so the collector adds readings going forward and does not backfill missing months. GitHub scheduled workflows can start late during periods of high load and only run from the default branch. The API's rain field is the cumulative total for the station's local day; both configured stations use `Europe/Vienna`.
 
 ## GitHub Pages dashboard
 

@@ -25,7 +25,7 @@ PLOTLY_JS = "https://cdn.jsdelivr.net/npm/plotly.js-dist-min@4.1.1/plotly.min.js
 OBSERVATIONS_DIR = "weathercloud-observations"
 STATIONS = {
     PRIMARY_STATION_ID: "Langau 124",
-    "7139585049": "Station 7139585049",
+    "7139585049": "Wolfsbach 28",
 }
 
 
