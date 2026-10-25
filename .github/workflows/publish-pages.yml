@@ -1,23 +1,17 @@
 name: Build and publish weather dashboard
 
 on:
+  schedule:
+    - cron: "17 1 * * *"
   push:
     branches:
       - main
     paths:
-      - "data/**"
       - "src/weathercloud/**"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/publish-pages.yml"
       - ".github/workflows/collect-weathercloud.yml"
-  workflow_run:
-    workflows:
-      - Collect Weathercloud observations
-    types:
-      - completed
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
@@ -31,7 +25,6 @@ concurrency:
 
 jobs:
   build:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out the latest main branch
@@ -65,7 +58,6 @@ jobs:
           path: site
 
   deploy:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

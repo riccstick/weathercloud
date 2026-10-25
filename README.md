@@ -51,4 +51,4 @@ Generate the page locally with:
 uv run build-rainfall-dashboard --data-dir data --output-dir site
 ```
 
-The `Build and publish weather dashboard` workflow deploys on changes to the main branch and after successful Weathercloud collection runs. To enable the first Pages deployment, open **Settings → Pages → Build and deployment** and set **Source** to **GitHub Actions**. The deployed URL is shown on the workflow's deployment environment in GitHub.
+The `Build and publish weather dashboard` workflow deploys once a day at 01:17 UTC. New Weathercloud readings continue to be collected every 10 minutes, then appear in the dashboard after its daily rebuild. Dashboard code and dependency changes deploy on push, and the workflow can be run manually from the Actions page. To enable Pages, open **Settings → Pages → Build and deployment** and set **Source** to **GitHub Actions**. The deployed URL is shown on the workflow's deployment environment in GitHub.
