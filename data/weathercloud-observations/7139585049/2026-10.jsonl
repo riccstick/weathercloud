@@ -163,3 +163,4 @@
 {"station_id":"7139585049","epoch":1793111183,"timestamp":"2026-10-27T15:26:23+01:00","temperature_c":10.2,"rain_today_mm":0.0,"rain_rate_mm_h":0.0}
 {"station_id":"7139585049","epoch":1793112383,"timestamp":"2026-10-27T15:46:23+01:00","temperature_c":9.8,"rain_today_mm":0.0,"rain_rate_mm_h":0.0}
 {"station_id":"7139585049","epoch":1793112983,"timestamp":"2026-10-27T15:56:23+01:00","temperature_c":9.2,"rain_today_mm":0.0,"rain_rate_mm_h":0.0}
+{"station_id":"7139585049","epoch":1793114183,"timestamp":"2026-10-27T16:16:23+01:00","temperature_c":7.9,"rain_today_mm":0.0,"rain_rate_mm_h":0.0}
